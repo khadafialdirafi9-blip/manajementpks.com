@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Management PKS Kebun Pabatu - PTPN IV</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Inter & FontAwesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 h-full flex flex-col overflow-hidden">
+
+    <div id="app" class="flex h-full w-full overflow-hidden">
+
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="w-64 bg-emerald-900 text-white flex flex-col flex-shrink-0 transition-all duration-300 z-30 md:relative absolute inset-y-0 left-0 -translate-x-full md:translate-x-0 shadow-xl">
+            <div class="p-5 border-b border-emerald-800 flex items-center justify-between">
+                <div class="flex items-center space-x-3 overflow-hidden cursor-pointer" onclick="openLogoModal()" title="Klik untuk edit logo perusahaan">
+                    <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center p-1 shadow-inner flex-shrink-0 overflow-hidden">
+                        <img id="sidebar-logo-img" src="https://placehold.co/100x100/14532d/ffffff?text=PTPN+IV" alt="Logo PTPN IV" class="w-full h-full object-contain" onerror="this.src='https://placehold.co/100x100/14532d/ffffff?text=LOGO'">
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-sm tracking-wide truncate" id="sidebar-company-name">PKS Kebun Pabatu</h1>
+                        <p class="text-xs text-emerald-300">PTPN IV Regional</p>
+                    </div>
+                </div>
+                <button onclick="toggleSidebar()" class="md:hidden text-emerald-200 hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <nav class="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto custom-scrollbar">
+                <a href="#overview" onclick="switchTab('overview')" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors bg-emerald-800 text-white shadow-sm" data-tab="overview">
+                    <i class="fa-solid fa-chart-pie w-5 text-center"></i>
+                    <span>Dashboard Overview</span>
+                </a>
+                <a href="#employees" onclick="switchTab('employees')" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors text-emerald-100 hover:bg-emerald-800/60" data-tab="employees">
+                    <i class="fa-solid fa-users w-5 text-center"></i>
+                    <span>Data Karyawan</span>
+                </a>
+                <a href="#structure" onclick="switchTab('structure')" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors text-emerald-100 hover:bg-emerald-800/60" data-tab="structure">
+                    <i class="fa-solid fa-sitemap w-5 text-center"></i>
+                    <span>Struktur Pimpinan</span>
+                </a>
+                <a href="#vision" onclick="switchTab('vision')" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors text-emerald-100 hover:bg-emerald-800/60" data-tab="vision">
+                    <i class="fa-solid fa-bullseye w-5 text-center"></i>
+                    <span>Visi & Misi</span>
+                </a>
+            </nav>
+
+            <div class="p-4 border-t border-emerald-800 text-xs text-emerald-300 text-center">
+                <p>&copy; 2026 PKS Kebun Pabatu</p>
+                <p class="mt-0.5 text-emerald-400">PTPN IV Palm Oil Mill</p>
+            </div>
+        </aside>
+
+        <!-- Main Content Wrapper -->
+        <div class="flex-1 flex flex-col h-full overflow-hidden">
+            
+            <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 z-20 flex-shrink-0 shadow-sm">
+                <div class="flex items-center space-x-4">
+                    <button onclick="toggleSidebar()" class="md:hidden text-slate-600 hover:text-slate-900 focus:outline-none">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                    <div>
+                        <h2 id="current-page-title" class="text-lg font-bold text-slate-800">Dashboard Overview</h2>
+                        <p class="text-xs text-slate-500 hidden sm:block">Sistem Manajemen & Informasi Karyawan Pabrik Kelapa Sawit</p>
+                    </div>
+                </div>
+
+                <!-- Management Profile Topbar Widget -->
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-3 cursor-pointer bg-slate-50 hover:bg-slate-100 px-3 py-1.5 rounded-full border border-slate-200 transition-all shadow-sm" onclick="openProfileModal()" title="Klik untuk edit profil management">
+                        <img id="topbar-profile-photo" src="https://placehold.co/100x100/15803d/ffffff?text=M" alt="Profile" class="w-9 h-9 rounded-full object-cover border-2 border-emerald-600">
+                        <div class="text-left hidden sm:block">
+                            <p id="topbar-profile-name" class="text-xs font-bold text-slate-800 truncate max-w-[120px]">Ir. H. Budi Santoso</p>
+                            <p id="topbar-profile-role" class="text-[10px] text-emerald-700 font-semibold truncate max-w-[120px]">Manager PKS</p>
+                        </div>
+                        <i class="fa-solid fa-chevron-down text-xs text-slate-400 ml-1"></i>
+                    </div>
+                </div>
+            </header>
+
+            <main class="flex-1 overflow-y-auto custom-scrollbar p-4 sm:p-8 bg-slate-50 relative">
+
+                <!-- TAB 1: OVERVIEW -->
+                <section id="tab-overview" class="tab-content space-y-6">
+                    <div class="bg-gradient-to-r from-emerald-800 to-emerald-950 rounded-2xl p-6 sm:p-8 text-white shadow-lg relative overflow-hidden flex flex-col md:flex-row items-center justify-between">
+                        <div class="relative z-10 max-w-xl">
+                            <span class="bg-emerald-700/80 text-emerald-100 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">PTPN IV Regional</span>
+                            <h3 class="text-2xl sm:text-3xl font-bold mt-3">PKS Kebun Pabatu Management System</h3>
+                            <p class="text-emerald-200 mt-2 text-sm sm:text-base leading-relaxed">Kelola data karyawan, struktur organisasi pimpinan, visi misi, serta profil perusahaan secara terpusat dengan penyimpanan lokal yang aman.</p>
+                            <div class="mt-6 flex flex-wrap gap-3">
+                                <button onclick="switchTab('employees')" class="bg-white text-emerald-900 font-semibold px-5 py-2.5 rounded-xl shadow hover:bg-emerald-50 transition text-sm flex items-center space-x-2">
+                                    <i class="fa-solid fa-users"></i>
+                                    <span>Kelola Karyawan</span>
+                                </button>
+                                <button onclick="switchTab('structure')" class="bg-emerald-700 text-white font-semibold px-5 py-2.5 rounded-xl shadow hover:bg-emerald-600 transition text-sm flex items-center space-x-2 border border-emerald-600">
+                                    <i class="fa-solid fa-sitemap"></i>
+                                    <span>Struktur Jabatan</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mt-6 md:mt-0 relative z-10 flex items-center justify-center">
+                            <div class="w-32 h-32 sm:w-40 sm:h-40 bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 flex items-center justify-center shadow-2xl">
+                                <img id="overview-logo-img" src="https://placehold.co/150x150/ffffff/14532d?text=PTPN+IV" alt="Logo" class="w-full h-full object-contain filter drop-shadow">
+                            </div>
+                        </div>
+                        <!-- Background decorative circles -->
+                        <div class="absolute -right-10 -bottom-10 w-60 h-60 bg-emerald-700/20 rounded-full blur-2xl pointer-events-none"></div>
+                    </div>
+
+                    <!-- Statistics Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                            <div>
+                                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Karyawan</p>
+                                <h4 id="stat-total-emp" class="text-2xl font-bold text-slate-800 mt-1">0</h4>
+                                <span class="text-xs text-emerald-600 font-medium mt-1 inline-block"><i class="fa-solid fa-arrow-trend-up mr-1"></i>Aktif Bekerja</span>
+                            </div>
+                            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl shadow-inner">
+                                <i class="fa-solid fa-users"></i>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                            <div>
+                                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Bagian / Unit</p>
+                                <h4 id="stat-total-dept" class="text-2xl font-bold text-slate-800 mt-1">0</h4>
+                                <span class="text-xs text-blue-600 font-medium mt-1 inline-block"><i class="fa-solid fa-building mr-1"></i>Divisi Pabrik</span>
+                            </div>
+                            <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl shadow-inner">
+                                <i class="fa-solid fa-industry"></i>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                            <div>
+                                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Tanggungan</p>
+                                <h4 id="stat-total-dependents" class="text-2xl font-bold text-slate-800 mt-1">0</h4>
+                                <span class="text-xs text-amber-600 font-medium mt-1 inline-block"><i class="fa-solid fa-family mr-1"></i>Keluarga Karyawan</span>
+                            </div>
+                            <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl shadow-inner">
+                                <i class="fa-solid fa-people-roof"></i>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                            <div>
+                                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Struktur Pimpinan</p>
+                                <h4 id="stat-total-leaders" class="text-2xl font-bold text-slate-800 mt-1">0</h4>
+                                <span class="text-xs text-purple-600 font-medium mt-1 inline-block"><i class="fa-solid fa-sitemap mr-1"></i>Jabatan Puncak</span>
+                            </div>
+                            <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl shadow-inner">
+                                <i class="fa-solid fa-user-tie"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Preview Section -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                            <div class="flex items-center justify-between mb-4">
+                                <h4 class="font-bold text-slate-800 flex items-center space-x-2">
+                                    <i class="fa-solid fa-bullseye text-emerald-600"></i>
+                                    <span>Ringkasan Visi & Misi</span>
+                                </h4>
+                                <button onclick="switchTab('vision')" class="text-xs text-emerald-600 hover:text-emerald-800 font-semibold">Edit Visi & Misi &rarr;</button>
+                            </div>
+                            <div id="overview-vision-preview" class="space-y-3 text-sm text-slate-600">
+                                <!-- Loaded dynamically -->
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                            <div class="flex items-center justify-between mb-4">
+                                <h4 class="font-bold text-slate-800 flex items-center space-x-2">
+                                    <i class="fa-solid fa-user-clock text-emerald-600"></i>
+                                    <span>Karyawan Terbaru Ditambahkan</span>
+                                </h4>
+                                <button onclick="switchTab('employees')" class="text-xs text-emerald-600 hover:text-emerald-800 font-semibold">Lihat Semua &rarr;</button>
+                            </div>
+                            <div id="overview-recent-employees" class="space-y-3">
+                                <!-- Loaded dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 2: EMPLOYEES CRUD -->
+                <section id="tab-employees" class="tab-content hidden space-y-6">
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-800">Manajemen Data Karyawan PKS Kebun Pabatu</h3>
+                            <p class="text-xs text-slate-500">Tambah, ubah, hapus, dan filter data lengkap pegawai.</p>
+                        </div>
+                        <div class="flex items-center space-x-3 w-full sm:w-auto justify-end">
+                            <button onclick="openEmployeeModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-semibold text-sm transition shadow-sm flex items-center space-x-2">
+                                <i class="fa-solid fa-user-plus"></i>
+                                <span>Tambah Karyawan</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Filters and Search -->
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+                        <div class="relative w-full md:w-80">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </span>
+                            <input type="text" id="search-input" oninput="filterEmployees()" placeholder="Cari Nama atau No SAP..." class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white">
+                        </div>
+                        <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                            <select id="filter-bag" onchange="filterEmployees()" class="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                <option value="">Semua Bagian</option>
+                            </select>
+                            <select id="filter-gol" onchange="filterEmployees()" class="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                <option value="">Semua Golongan</option>
+                            </select>
+                            <button onclick="resetFilters()" class="text-slate-500 hover:text-slate-700 text-xs font-semibold px-3 py-2 border border-slate-200 rounded-xl bg-slate-50">Reset</button>
+                        </div>
+                    </div>
+
+                    <!-- Employees Table / Cards -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 text-xs font-bold uppercase tracking-wider">
+                                        <th class="p-4">Karyawan</th>
+                                        <th class="p-4">No SAP</th>
+                                        <th class="p-4">Bagian</th>
+                                        <th class="p-4">Jabatan</th>
+                                        <th class="p-4">Golongan</th>
+                                        <th class="p-4 text-center">Tanggungan</th>
+                                        <th class="p-4 text-center">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="employee-table-body" class="divide-y divide-slate-100 text-sm text-slate-700">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="employee-empty-state" class="hidden p-12 text-center">
+                            <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto text-2xl mb-3">
+                                <i class="fa-solid fa-user-slash"></i>
+                            </div>
+                            <p class="font-bold text-slate-700">Tidak ada data karyawan ditemukan</p>
+                            <p class="text-xs text-slate-500 mt-1">Coba sesuaikan kata kunci pencarian atau filter Anda.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 3: STRUCTURE JABATAN PIMPINAN -->
+                <section id="tab-structure" class="tab-content hidden space-y-6">
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-800">Struktur Jabatan Pimpinan PKS Kebun Pabatu</h3>
+                            <p class="text-xs text-slate-500">Kelola hierarki pimpinan pabrik, tambah posisi baru, atau sunting pejabat.</p>
+                        </div>
+                        <button onclick="openLeaderModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-semibold text-sm transition shadow-sm flex items-center space-x-2">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Tambah Pimpinan</span>
+                        </button>
+                    </div>
+
+                    <!-- Org Tree Container -->
+                    <div class="bg-white p-6 sm:p-10 rounded-2xl border border-slate-200 shadow-sm overflow-x-auto">
+                        <div id="org-tree-container" class="flex flex-col items-center min-w-[700px] py-4">
+                            <!-- Rendered dynamically -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 4: VISI & MISI -->
+                <section id="tab-vision" class="tab-content hidden space-y-6">
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-800">Visi & Misi PKS Kebun Pabatu</h3>
+                            <p class="text-xs text-slate-500">Sunting visi perusahaan dan daftar misi strategis.</p>
+                        </div>
+                        <button onclick="saveVisionMission()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-semibold text-sm transition shadow-sm flex items-center space-x-2">
+                            <i class="fa-solid fa-floppy-disk"></i>
+                            <span>Simpan Perubahan</span>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Visi Card -->
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col">
+                            <div class="flex items-center space-x-3 mb-4">
+                                <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                                    <i class="fa-solid fa-eye"></i>
+                                </div>
+                                <h4 class="font-bold text-slate-800 text-base">Visi Perusahaan</h4>
+                            </div>
+                            <textarea id="vision-textarea" rows="4" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 flex-1"></textarea>
+                        </div>
+
+                        <!-- Misi Card -->
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+                                        <i class="fa-solid fa-list-check"></i>
+                                    </div>
+                                    <h4 class="font-bold text-slate-800 text-base">Misi Perusahaan</h4>
+                                </div>
+                                <button onclick="addMissionItem()" class="text-xs font-semibold text-blue-600 hover:text-blue-800 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100 flex items-center space-x-1">
+                                    <i class="fa-solid fa-plus"></i>
+                                    <span>Tambah Misi</span>
+                                </button>
+                            </div>
+                            <div id="mission-list-container" class="space-y-3 flex-1 overflow-y-auto max-h-[300px] custom-scrollbar pr-1">
+                                <!-- Dynamic mission inputs -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- MODAL: COMPANY LOGO SETTINGS -->
+    <div id="logo-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 animate-in fade-in zoom-in duration-200">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="font-bold text-slate-800 text-lg flex items-center space-x-2">
+                    <i class="fa-solid fa-image text-emerald-600"></i>
+                    <span>Pengaturan Logo Perusahaan</span>
+                </h3>
+                <button onclick="closeLogoModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1 uppercase tracking-wider">Nama Perusahaan / Unit</label>
+                    <input type="text" id="modal-company-name-input" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1 uppercase tracking-wider">URL Gambar Logo</label>
+                    <input type="text" id="modal-logo-url-input" placeholder="https://example.com/logo.png" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1 uppercase tracking-wider">Atau Unggah Berkas Logo</label>
+                    <input type="file" id="modal-logo-file-input" accept="image/*" onchange="previewLogoFile(event)" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100">
+                </div>
+                <div class="flex justify-center p-4 bg-slate-50 rounded-xl border border-slate-200">
+                    <img id="modal-logo-preview" src="" alt="Preview" class="w-20 h-20 object-contain" onerror="this.src='https://placehold.co/100x100/14532d/ffffff?text=LOGO'">
+                </div>
+                <div class="flex justify-end space-x-3 pt-2">
+                    <button onclick="closeLogoModal()" class="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50">Batal</button>
+                    <button onclick="saveLogoSettings()" class="px-4 py-2 rounded-xl bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 shadow-sm">Simpan Logo</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: MANAGEMENT PROFILE SETTINGS -->
+    <div id="profile-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="font-bold text-slate-800 text-lg flex items-center space-x-2">
+                    <i class="fa-solid fa-user-gear text-emerald-600"></i>
+                    <span>Sunting Profil Management</span>
+                </h3>
+                <button onclick="closeProfileModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1 uppercase tracking-wider">Nama Lengkap & Gelar</label>
+                    <input type="text" id="modal-profile-name" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1 uppercase tracking-wider">Jabatan / Role</label>
+                    <input type="text" id="modal-profile-role" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1 uppercase tracking-wider">URL Foto Profil</label>
+                    <input type="text" id="modal-profile-photo-url" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1 uppercase tracking-wider">Atau Unggah Foto</label>
+                    <input type="file" id="modal-profile-file-input" accept="image/*" onchange="previewProfileFile(event)" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100">
+                </div>
+                <div class="flex justify-center p-4 bg-slate-50 rounded-xl border border-slate-200">
+                    <img id="modal-profile-preview" src="" alt="Preview" class="w-20 h-20 rounded-full object-cover border-2 border-emerald-600">
+                </div>
+                <div class="flex justify-end space-x-3 pt-2">
+                    <button onclick="closeProfileModal()" class="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50">Batal</button>
+                    <button onclick="saveProfileSettings()" class="px-4 py-2 rounded-xl bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 shadow-sm">Simpan Profil</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD / EDIT EMPLOYEE -->
+    <div id="employee-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 my-8">
+            <div class="flex items-center justify-between mb-4">
+                <h3 id="employee-modal-title" class="font-bold text-slate-800 text-lg flex items-center space-x-2">
+                    <i class="fa-solid fa-user-plus text-emerald-600"></i>
+                    <span>Tambah Data Karyawan</span>
+                </h3>
+                <button onclick="closeEmployeeModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form id="employee-form" onsubmit="handleEmployeeSubmit(event)" class="space-y-4">
+                <input type="hidden" id="emp-id">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1 uppercase tracking-wider">Nama Lengkap</label>
+                        <input type="text" id="emp-nama" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1 uppercase tracking-wider">No. SAP</label>
+                        <input type="text" id="emp-nosap" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1 uppercase tracking-wider">Bagian / Divisi</label>
+                        <select id="emp-bagian" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            <option value="Tanaman">Tanaman</option>
+                            <option value="Teknik / Pengolahan">Teknik / Pengolahan</option>
+                            <option value="SDM & Umum">SDM & Umum</option>
+                            <option value="Keuangan & Akuntansi">Keuangan & Akuntansi</option>
+                            <option value="Pengamanan / Satpam">Pengamanan / Satpam</option>
+                            <option value="Laboratorium">Laboratorium</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1 uppercase tracking-wider">Jabatan</label>
+                        <input type="text" id="emp-jabatan" required placeholder="Contoh: Asisten Pengolahan" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1 uppercase tracking-wider">Golongan</label>
+                        <select id="emp-golongan" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            <option value="IV/a">IV/a</option>
+                            <option value="III/c">III/c</option>
+                            <option value="III/b">III/b</option>
+                            <option value="III/a">III/a</option>
+                            <option value="II/d">II/d</option>
+                            <option value="II/c">II/c</option>
+                            <option value="II/b">II/b</option>
+                            <option value="II/a">II/a</option>
+                            <option value="I/c">I/c</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1 uppercase tracking-wider">Jumlah Tanggungan</label>
+                        <input type="number" id="emp-tanggungan" min="0" value="0" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1 uppercase tracking-wider">URL Foto Karyawan</label>
+                    <input type="text" id="emp-foto" placeholder="https://images.unsplash.com/..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1 uppercase tracking-wider">Atau Unggah Foto File</label>
+                    <input type="file" id="emp-foto-file" accept="image/*" onchange="previewEmpPhotoFile(event)" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100">
+                </div>
+                <div class="flex justify-center">
+                    <img id="emp-foto-preview" src="https://placehold.co/100x100/e2e8f0/475569?text=FOTO" class="w-16 h-16 rounded-full object-cover border border-slate-300">
+                </div>
+                <div class="flex justify-end space-x-3 pt-4 border-t border-slate-100">
+                    <button type="button" onclick="closeEmployeeModal()" class="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50">Batal</button>
+                    <button type="submit" class="px-5 py-2 rounded-xl bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 shadow-sm">Simpan Karyawan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD / EDIT LEADER (ORG STRUCTURE) -->
+    <div id="leader-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100">
+            <div class="flex items-center justify-between mb-4">
+                <h3 id="leader-modal-title" class="font-bold text-slate-800 text-lg flex items-center space-x-2">
+                    <i class="fa-solid fa-user-tie text-emerald-600"></i>
+                    <span>Tambah Pimpinan</span>
+                </h3>
+                <button onclick="closeLeaderModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form id="leader-form" onsubmit="handleLeaderSubmit(event)" class="space-y-4">
+                <input type="hidden" id="leader-id">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1 uppercase tracking-wider">Nama Pejabat</label>
+                    <input type="text" id="leader-name" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1 uppercase tracking-wider">Jabatan / Posisi</label>
+                    <input type="text" id="leader-position" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1 uppercase tracking-wider">URL Foto Pejabat</label>
+                    <input type="text" id="leader-photo" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div class="flex justify-end space-x-3 pt-3">
+                    <button type="button" onclick="closeLeaderModal()" class="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50">Batal</button>
+                    <button type="submit" class="px-4 py-2 rounded-xl bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 shadow-sm">Simpan Pimpinan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- CUSTOM NOTIFICATION MODAL -->
+    <div id="notification-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl text-center space-y-4 border border-slate-100">
+            <div id="notif-icon" class="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-2xl">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h4 id="notif-title" class="font-bold text-slate-800 text-lg">Berhasil!</h4>
+            <p id="notif-message" class="text-xs text-slate-500">Data berhasil disimpan ke sistem.</p>
+            <button onclick="closeNotification()" class="w-full py-2.5 bg-emerald-600 text-white font-semibold rounded-xl text-sm hover:bg-emerald-700 shadow-sm">OK</button>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        let defaultAppData = {
+            company: {
+                name: "PKS Kebun Pabatu",
+                logoUrl: "https://placehold.co/100x100/14532d/ffffff?text=PTPN+IV"
+            },
+            profile: {
+                name: "Ir. H. Budi Santoso",
+                role: "Manager PKS Kebun Pabatu",
+                photoUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150"
+            },
+            vision: "Menjadi Pabrik Kelapa Sawit yang unggul, efisien, dan berkelanjutan dalam menghasilkan minyak sawit berkualitas tinggi demi kesejahteraan stakeholders.",
+            missions: [
+                "Melakukan proses pengolahan Tandan Buah Segar (TBS) secara optimal dan tepat mutu.",
+                "Menerapkan prinsip Good Corporate Governance (GCG) dan keselamatan kerja yang tinggi.",
+                "Mengembangkan kompetensi SDM secara berkesinambungan dan ramah lingkungan."
+            ],
+            leaders: [
+                { id: 'l1', name: 'Ir. H. Budi Santoso', position: 'Manager PKS', photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150' },
+                { id: 'l2', name: 'Ahmad Fauzi, ST', position: 'Asisten Teknik / Pengolahan', photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150' },
+                { id: 'l3', name: 'Dra. Siti Aminah', position: 'Asisten SDM & Umum', photo: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150' },
+                { id: 'l4', name: 'Rian Hidayat, SE', position: 'Kepala Tata Usaha & Keuangan', photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150' }
+            ],
+            employees: [
+                { id: 'e1', nama: 'Joko Widodo', noSap: 'SAP1001', bagian: 'Teknik / Pengolahan', jabatan: 'Masinis Kepala', golongan: 'III/c', tanggungan: 3, foto: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150' },
+                { id: 'e2', nama: 'Dewi Lestari', noSap: 'SAP1002', bagian: 'SDM & Umum', jabatan: 'Staff Personalia', golongan: 'III/a', tanggungan: 2, foto: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150' },
+                { id: 'e3', nama: 'Bambang Pamungkas', noSap: 'SAP1003', bagian: 'Tanaman', jabatan: 'Mandor Produksi', golongan: 'II/d', tanggungan: 4, foto: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150' },
+                { id: 'e4', nama: 'Suryani Siregar', noSap: 'SAP1004', bagian: 'Laboratorium', jabatan: 'Analis Laboratorium', golongan: 'III/b', tanggungan: 1, foto: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150' },
+                { id: 'e5', nama: 'Zulkifli Nasution', noSap: 'SAP1005', bagian: 'Pengamanan / Satpam', jabatan: 'Komandan Regu Satpam', golongan: 'II/c', tanggungan: 3, foto: 'https://images.unsplash.com/photo-1628157582853-a796fa650a6a?w=150' }
+            ]
+        };
+
+        // Load from LocalStorage or Fallback
+        let appData = JSON.parse(localStorage.getItem('pabatu_dashboard_data')) || defaultAppData;
+
+        function saveToStorage() {
+            localStorage.setItem('pabatu_dashboard_data', JSON.stringify(appData));
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-link').forEach(el => {
+                el.classList.remove('bg-emerald-800', 'text-white', 'shadow-sm');
+                el.classList.add('text-emerald-100', 'hover:bg-emerald-800/60');
+            });
+
+            const activeTab = document.getElementById(`tab-${tabId}`);
+            if (activeTab) activeTab.classList.remove('hidden');
+
+            const activeLink = document.querySelector(`[data-tab="${tabId}"]`);
+            if (activeLink) {
+                activeLink.classList.remove('text-emerald-100', 'hover:bg-emerald-800/60');
+                activeLink.classList.add('bg-emerald-800', 'text-white', 'shadow-sm');
+            }
+
+            const titles = {
+                overview: 'Dashboard Overview',
+                employees: 'Data Karyawan PKS',
+                structure: 'Struktur Jabatan Pimpinan',
+                vision: 'Visi & Misi Perusahaan'
+            };
+            document.getElementById('current-page-title').innerText = titles[tabId] || 'Dashboard';
+
+            // Re-render tab specific data
+            if(tabId === 'overview') renderOverview();
+            if(tabId === 'employees') renderEmployees();
+            if(tabId === 'structure') renderOrgTree();
+            if(tabId === 'vision') renderVisionMission();
+        }
+
+        function renderAll() {
+            renderCompanyHeader();
+            renderProfileHeader();
+            renderOverview();
+            renderEmployees();
+            renderOrgTree();
+            renderVisionMission();
+        }
+
+        function renderCompanyHeader() {
+            document.getElementById('sidebar-company-name').innerText = appData.company.name;
+            document.getElementById('sidebar-logo-img').src = appData.company.logoUrl;
+            const ovLogo = document.getElementById('overview-logo-img');
+            if(ovLogo) ovLogo.src = appData.company.logoUrl;
+        }
+
+        function renderProfileHeader() {
+            document.getElementById('topbar-profile-name').innerText = appData.profile.name;
+            document.getElementById('topbar-profile-role').innerText = appData.profile.role;
+            document.getElementById('topbar-profile-photo').src = appData.profile.photoUrl;
+        }
+
+        function renderOverview() {
+            document.getElementById('stat-total-emp').innerText = appData.employees.length;
+            const depts = new Set(appData.employees.map(e => e.bagian));
+            document.getElementById('stat-total-dept').innerText = depts.size;
+            const totalDep = appData.employees.reduce((sum, e) => sum + parseInt(e.tanggungan || 0), 0);
+            document.getElementById('stat-total-dependents').innerText = totalDep;
+            document.getElementById('stat-total-leaders').innerText = appData.leaders.length;
+
+            // Vision Preview
+            const vPrev = document.getElementById('overview-vision-preview');
+            vPrev.innerHTML = `<p class="italic text-slate-700 font-medium">"${appData.vision}"</p>`;
+
+            // Recent Employees
+            const recContainer = document.getElementById('overview-recent-employees');
+            const recent = [...appData.employees].reverse().slice(0, 4);
+            recContainer.innerHTML = recent.length ? recent.map(emp => `
+                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
+                    <div class="flex items-center space-x-3">
+                        <img src="${emp.foto || 'https://placehold.co/100x100/e2e8f0/475569?text=FOTO'}" class="w-10 h-10 rounded-full object-cover border border-slate-200">
+                        <div>
+                            <p class="font-bold text-xs text-slate-800">${emp.nama}</p>
+                            <p class="text-[10px] text-slate-500">${emp.jabatan} • ${emp.bagian}</p>
+                        </div>
+                    </div>
+                    <span class="text-[10px] font-semibold bg-emerald-100 text-emerald-800 px-2 py-1 rounded-lg">${emp.golongan}</span>
+                </div>
+            `).join('') : '<p class="text-xs text-slate-400 text-center py-4">Belum ada data karyawan.</p>';
+        }
+
+        function renderEmployees() {
+            const tbody = document.getElementById('employee-table-body');
+            const emptyState = document.getElementById('employee-empty-state');
+            
+            // Populate bag & gol dropdown filters
+            const bagSelect = document.getElementById('filter-bag');
+            const golSelect = document.getElementById('filter-gol');
+            const uniqueBags = [...new Set(appData.employees.map(e => e.bagian))];
+            const uniqueGols = [...new Set(appData.employees.map(e => e.golongan))];
+
+            const currentBag = bagSelect.value;
+            const currentGol = golSelect.value;
+
+            bagSelect.innerHTML = '<option value="">Semua Bagian</option>' + uniqueBags.map(b => `<option value="${b}">${b}</option>`).join('');
+            bagSelect.value = currentBag;
+
+            golSelect.innerHTML = '<option value="">Semua Golongan</option>' + uniqueGols.map(g => `<option value="${g}">${g}</option>`).join('');
+            golSelect.value = currentGol;
+
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const filterBag = bagSelect.value;
+            const filterGol = golSelect.value;
+
+            const filtered = appData.employees.filter(emp => {
+                const matchSearch = emp.nama.toLowerCase().includes(searchTerm) || emp.noSap.toLowerCase().includes(searchTerm);
+                const matchBag = filterBag === '' || emp.bagian === filterBag;
+                const matchGol = filterGol === '' || emp.golongan === filterGol;
+                return matchSearch && matchBag && matchGol;
+            });
+
+            if(filtered.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            tbody.innerHTML = filtered.map(emp => `
+                <tr class="hover:bg-slate-50/80 transition-colors">
+                    <td class="p-4 flex items-center space-x-3">
+                        <img src="${emp.foto || 'https://placehold.co/100x100/e2e8f0/475569?text=FOTO'}" class="w-10 h-10 rounded-full object-cover border border-slate-200 flex-shrink-0">
+                        <div>
+                            <p class="font-bold text-slate-800 text-sm">${emp.nama}</p>
+                            <p class="text-xs text-slate-500">Tanggungan: ${emp.tanggungan} orang</p>
+                        </div>
+                    </td>
+                    <td class="p-4 font-mono text-xs text-slate-600 font-semibold">${emp.noSap}</td>
+                    <td class="p-4"><span class="bg-blue-50 text-blue-700 text-xs px-2.5 py-1 rounded-lg font-medium">${emp.bagian}</span></td>
+                    <td class="p-4 text-slate-700 text-sm">${emp.jabatan}</td>
+                    <td class="p-4"><span class="bg-slate-100 text-slate-700 text-xs px-2.5 py-1 rounded-lg font-semibold">${emp.golongan}</span></td>
+                    <td class="p-4 text-center font-bold text-slate-800">${emp.tanggungan}</td>
+                    <td class="p-4 text-center">
+                        <div class="flex items-center justify-center space-x-2">
+                            <button onclick="editEmployee('${emp.id}')" class="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 hover:bg-amber-100 flex items-center justify-center transition" title="Edit">
+                                <i class="fa-solid fa-pen text-xs"></i>
+                            </button>
+                            <button onclick="deleteEmployee('${emp.id}')" class="w-8 h-8 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 flex items-center justify-center transition" title="Hapus">
+                                <i class="fa-solid fa-trash text-xs"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function filterEmployees() {
+            renderEmployees();
+        }
+
+        function resetFilters() {
+            document.getElementById('search-input').value = '';
+            document.getElementById('filter-bag').value = '';
+            document.getElementById('filter-gol').value = '';
+            renderEmployees();
+        }
+
+        function openEmployeeModal(empId = null) {
+            const modal = document.getElementById('employee-modal');
+            const title = document.getElementById('employee-modal-title');
+            document.getElementById('employee-form').reset();
+            document.getElementById('emp-id').value = '';
+            document.getElementById('emp-foto-preview').src = 'https://placehold.co/100x100/e2e8f0/475569?text=FOTO';
+
+            if(empId) {
+                title.innerHTML = '<i class="fa-solid fa-user-pen text-emerald-600"></i><span>Sunting Data Karyawan</span>';
+                const emp = appData.employees.find(e => e.id === empId);
+                if(emp) {
+                    document.getElementById('emp-id').value = emp.id;
+                    document.getElementById('emp-nama').value = emp.nama;
+                    document.getElementById('emp-nosap').value = emp.noSap;
+                    document.getElementById('emp-bagian').value = emp.bagian;
+                    document.getElementById('emp-jabatan').value = emp.jabatan;
+                    document.getElementById('emp-golongan').value = emp.golongan;
+                    document.getElementById('emp-tanggungan').value = emp.tanggungan;
+                    document.getElementById('emp-foto').value = emp.foto || '';
+                    if(emp.foto) document.getElementById('emp-foto-preview').src = emp.foto;
+                }
+            } else {
+                title.innerHTML = '<i class="fa-solid fa-user-plus text-emerald-600"></i><span>Tambah Data Karyawan</span>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeEmployeeModal() {
+            document.getElementById('employee-modal').classList.add('hidden');
+        }
+
+        function previewEmpPhotoFile(event) {
+            const file = event.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('emp-foto').value = e.target.result;
+                    document.getElementById('emp-foto-preview').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handleEmployeeSubmit(event) {
+            event.preventDefault();
+            const id = document.getElementById('emp-id').value;
+            const newEmp = {
+                id: id || 'e_' + Date.now(),
+                nama: document.getElementById('emp-nama').value,
+                noSap: document.getElementById('emp-nosap').value,
+                bagian: document.getElementById('emp-bagian').value,
+                jabatan: document.getElementById('emp-jabatan').value,
+                golongan: document.getElementById('emp-golongan').value,
+                tanggungan: parseInt(document.getElementById('emp-tanggungan').value) || 0,
+                foto: document.getElementById('emp-foto').value || 'https://placehold.co/100x100/e2e8f0/475569?text=FOTO'
+            };
+
+            if(id) {
+                const idx = appData.employees.findIndex(e => e.id === id);
+                if(idx !== -1) appData.employees[idx] = newEmp;
+            } else {
+                appData.employees.push(newEmp);
+            }
+
+            saveToStorage();
+            closeEmployeeModal();
+            renderEmployees();
+            showNotification('Berhasil', 'Data karyawan berhasil disimpan.');
+        }
+
+        function editEmployee(id) {
+            openEmployeeModal(id);
+        }
+
+        function deleteEmployee(id) {
+            if(confirm('Apakah Anda yakin ingin menghapus data karyawan ini?')) {
+                appData.employees = appData.employees.filter(e => e.id !== id);
+                saveToStorage();
+                renderEmployees();
+                showNotification('Terhapus', 'Data karyawan telah dihapus.');
+            }
+        }
+
+        function renderOrgTree() {
+            const container = document.getElementById('org-tree-container');
+            if(!appData.leaders || appData.leaders.length === 0) {
+                container.innerHTML = '<p class="text-xs text-slate-400">Belum ada struktur pimpinan.</p>';
+                return;
+            }
+
+            // Top Manager (First leader or Manager PKS)
+            const manager = appData.leaders[0];
+            const subordinates = appData.leaders.slice(1);
+
+            container.innerHTML = `
+                <!-- Manager Puncak -->
+                <div class="bg-emerald-900 text-white p-5 rounded-2xl shadow-xl w-72 text-center relative border-4 border-emerald-600 flex flex-col items-center">
+                    <div class="absolute -top-3 right-3 flex space-x-1">
+                        <button onclick="editLeader('${manager.id}')" class="w-6 h-6 bg-white/20 hover:bg-white/40 rounded-full flex items-center justify-center text-xs"><i class="fa-solid fa-pen"></i></button>
+                    </div>
+                    <img src="${manager.photo || 'https://placehold.co/100x100/14532d/ffffff?text=M'}" class="w-20 h-20 rounded-full object-cover border-2 border-white mb-3 shadow-md">
+                    <h4 class="font-bold text-base">${manager.name}</h4>
+                    <p class="text-xs text-emerald-200 mt-0.5 font-semibold">${manager.position}</p>
+                </div>
+
+                ${subordinates.length > 0 ? `
+                    <div class="w-0.5 h-10 bg-emerald-700 my-2"></div>
+                    <div class="w-full max-w-4xl h-0.5 bg-emerald-700 mb-6"></div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full px-4">
+                        ${subordinates.map(sub => `
+                            <div class="bg-white text-slate-800 p-5 rounded-2xl shadow-md border border-slate-200 text-center relative flex flex-col items-center hover:shadow-lg transition">
+                                <div class="absolute top-2 right-2 flex space-x-1">
+                                    <button onclick="editLeader('${sub.id}')" class="w-6 h-6 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-xs text-slate-600"><i class="fa-solid fa-pen"></i></button>
+                                    <button onclick="deleteLeader('${sub.id}')" class="w-6 h-6 bg-red-50 hover:bg-red-100 rounded-full flex items-center justify-center text-xs text-red-600"><i class="fa-solid fa-trash"></i></button>
+                                </div>
+                                <img src="${sub.photo || 'https://placehold.co/100x100/e2e8f0/475569?text=L'}" class="w-16 h-16 rounded-full object-cover border border-slate-200 mb-3 shadow-inner">
+                                <h5 class="font-bold text-sm text-slate-800">${sub.name}</h5>
+                                <p class="text-xs text-emerald-700 font-semibold mt-0.5">${sub.position}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+            `;
+        }
+
+        function openLeaderModal(leaderId = null) {
+            const modal = document.getElementById('leader-modal');
+            const title = document.getElementById('leader-modal-title');
+            document.getElementById('leader-form').reset();
+            document.getElementById('leader-id').value = '';
+
+            if(leaderId) {
+                title.innerHTML = '<i class="fa-solid fa-user-pen text-emerald-600"></i><span>Sunting Pimpinan</span>';
+                const l = appData.leaders.find(x => x.id === leaderId);
+                if(l) {
+                    document.getElementById('leader-id').value = l.id;
+                    document.getElementById('leader-name').value = l.name;
+                    document.getElementById('leader-position').value = l.position;
+                    document.getElementById('leader-photo').value = l.photo || '';
+                }
+            } else {
+                title.innerHTML = '<i class="fa-solid fa-user-tie text-emerald-600"></i><span>Tambah Pimpinan</span>';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeLeaderModal() {
+            document.getElementById('leader-modal').classList.add('hidden');
+        }
+
+        function handleLeaderSubmit(event) {
+            event.preventDefault();
+            const id = document.getElementById('leader-id').value;
+            const newLeader = {
+                id: id || 'l_' + Date.now(),
+                name: document.getElementById('leader-name').value,
+                position: document.getElementById('leader-position').value,
+                photo: document.getElementById('leader-photo').value || 'https://placehold.co/100x100/e2e8f0/475569?text=L'
+            };
+
+            if(id) {
+                const idx = appData.leaders.findIndex(x => x.id === id);
+                if(idx !== -1) appData.leaders[idx] = newLeader;
+            } else {
+                appData.leaders.push(newLeader);
+            }
+
+            saveToStorage();
+            closeLeaderModal();
+            renderOrgTree();
+            showNotification('Berhasil', 'Struktur pimpinan berhasil diperbarui.');
+        }
+
+        function editLeader(id) {
+            openLeaderModal(id);
+        }
+
+        function deleteLeader(id) {
+            if(confirm('Hapus pimpinan ini dari struktur?')) {
+                appData.leaders = appData.leaders.filter(x => x.id !== id);
+                saveToStorage();
+                renderOrgTree();
+                showNotification('Terhapus', 'Pimpinan telah dihapus.');
+            }
+        }
+
+        function renderVisionMission() {
+            document.getElementById('vision-textarea').value = appData.vision;
+            const mContainer = document.getElementById('mission-list-container');
+            mContainer.innerHTML = appData.missions.map((m, index) => `
+                <div class="flex items-center space-x-2">
+                    <span class="w-6 h-6 rounded-full bg-blue-50 text-blue-700 font-bold text-xs flex items-center justify-center flex-shrink-0">${index + 1}</span>
+                    <input type="text" value="${m}" class="mission-input flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button onclick="removeMissionItem(this)" class="w-8 h-8 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 flex items-center justify-center"><i class="fa-solid fa-trash text-xs"></i></button>
+                </div>
+            `).join('');
+        }
+
+        function addMissionItem() {
+            const mContainer = document.getElementById('mission-list-container');
+            const div = document.createElement('div');
+            div.className = 'flex items-center space-x-2';
+            div.innerHTML = `
+                <span class="w-6 h-6 rounded-full bg-blue-50 text-blue-700 font-bold text-xs flex items-center justify-center flex-shrink-0">•</span>
+                <input type="text" value="" placeholder="Tulis misi baru..." class="mission-input flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <button onclick="removeMissionItem(this)" class="w-8 h-8 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 flex items-center justify-center"><i class="fa-solid fa-trash text-xs"></i></button>
+            `;
+            mContainer.appendChild(div);
+        }
+
+        function removeMissionItem(btn) {
+            btn.parentElement.remove();
+        }
+
+        function saveVisionMission() {
+            appData.vision = document.getElementById('vision-textarea').value;
+            const missionInputs = document.querySelectorAll('.mission-input');
+            appData.missions = Array.from(missionInputs).map(i => i.value).filter(v => v.trim() !== '');
+            saveToStorage();
+            showNotification('Berhasil', 'Visi & Misi perusahaan berhasil diperbarui.');
+        }
+
+        function openLogoModal() {
+            document.getElementById('modal-company-name-input').value = appData.company.name;
+            document.getElementById('modal-logo-url-input').value = appData.company.logoUrl;
+            document.getElementById('modal-logo-preview').src = appData.company.logoUrl;
+            document.getElementById('logo-modal').classList.remove('hidden');
+        }
+
+        function closeLogoModal() {
+            document.getElementById('logo-modal').classList.add('hidden');
+        }
+
+        function previewLogoFile(event) {
+            const file = event.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('modal-logo-url-input').value = e.target.result;
+                    document.getElementById('modal-logo-preview').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function saveLogoSettings() {
+            appData.company.name = document.getElementById('modal-company-name-input').value || 'PKS Kebun Pabatu';
+            appData.company.logoUrl = document.getElementById('modal-logo-url-input').value || 'https://placehold.co/100x100/14532d/ffffff?text=LOGO';
+            saveToStorage();
+            closeLogoModal();
+            renderCompanyHeader();
+            renderOverview();
+            showNotification('Berhasil', 'Logo perusahaan berhasil diperbarui.');
+        }
+
+        function openProfileModal() {
+            document.getElementById('modal-profile-name').value = appData.profile.name;
+            document.getElementById('modal-profile-role').value = appData.profile.role;
+            document.getElementById('modal-profile-photo-url').value = appData.profile.photoUrl;
+            document.getElementById('modal-profile-preview').src = appData.profile.photoUrl;
+            document.getElementById('profile-modal').classList.remove('hidden');
+        }
+
+        function closeProfileModal() {
+            document.getElementById('profile-modal').classList.add('hidden');
+        }
+
+        function previewProfileFile(event) {
+            const file = event.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('modal-profile-photo-url').value = e.target.result;
+                    document.getElementById('modal-profile-preview').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function saveProfileSettings() {
+            appData.profile.name = document.getElementById('modal-profile-name').value || 'Manager';
+            appData.profile.role = document.getElementById('modal-profile-role').value || 'Manager PKS';
+            appData.profile.photoUrl = document.getElementById('modal-profile-photo-url').value || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150';
+            saveToStorage();
+            closeProfileModal();
+            renderProfileHeader();
+            showNotification('Berhasil', 'Profil management berhasil diperbarui.');
+        }
+
+        function showNotification(title, message) {
+            document.getElementById('notif-title').innerText = title;
+            document.getElementById('notif-message').innerText = message;
+            document.getElementById('notification-modal').classList.remove('hidden');
+        }
+
+        function closeNotification() {
+            document.getElementById('notification-modal').classList.add('hidden');
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            renderAll();
+        }
+    </script>
+</body>
+</html>
